@@ -2,11 +2,11 @@ import { handleRouteRequest } from './routeHandler'
 import { createTripProfileStore } from './tripProfileStore'
 
 describe('Trip Profile → Routing Plan integration', () => {
-  it('activeProfile from store is sent to route request and shapes the RoutingPlan', () => {
+  it('activeProfile from store is sent to route request and shapes the RoutingPlan', async () => {
     const store = createTripProfileStore()
     store.setOverride({ reliability: 10, safety: 80, speed: 10 })
 
-    const result = handleRouteRequest({
+    const result = await handleRouteRequest({
       origin: 'London',
       destination: 'Edinburgh',
       tripProfile: store.activeProfile,
@@ -18,13 +18,13 @@ describe('Trip Profile → Routing Plan integration', () => {
     }
   })
 
-  it('safety-heavy profile produces more charging stops than speed-heavy', () => {
-    const safeResult = handleRouteRequest({
+  it('safety-heavy profile produces more charging stops than speed-heavy', async () => {
+    const safeResult = await handleRouteRequest({
       origin: 'London',
       destination: 'Edinburgh',
       tripProfile: { reliability: 10, safety: 80, speed: 10 },
     })
-    const speedResult = handleRouteRequest({
+    const speedResult = await handleRouteRequest({
       origin: 'London',
       destination: 'Edinburgh',
       tripProfile: { reliability: 10, safety: 10, speed: 80 },
@@ -37,16 +37,16 @@ describe('Trip Profile → Routing Plan integration', () => {
     }
   })
 
-  it('changing override produces a different RoutingPlan', () => {
+  it('changing override produces a different RoutingPlan', async () => {
     const store = createTripProfileStore()
 
     store.setOverride({ reliability: 10, safety: 80, speed: 10 })
-    const safePlan = handleRouteRequest({
+    const safePlan = await handleRouteRequest({
       origin: 'London', destination: 'Edinburgh', tripProfile: store.activeProfile,
     })
 
     store.setOverride({ reliability: 10, safety: 10, speed: 80 })
-    const speedPlan = handleRouteRequest({
+    const speedPlan = await handleRouteRequest({
       origin: 'London', destination: 'Edinburgh', tripProfile: store.activeProfile,
     })
 

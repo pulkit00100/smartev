@@ -1,12 +1,11 @@
 import { handleRouteRequest } from './routeHandler'
 import type { TripProfile } from '../types'
 
-// Test the handler directly — the hook is just a thin wrapper around it
 const balanced: TripProfile = { reliability: 34, safety: 33, speed: 33 }
 
 describe('useRoutingPlan (via handleRouteRequest)', () => {
-  it('fetching with valid origin/destination returns a RoutingPlan with legs', () => {
-    const result = handleRouteRequest({
+  it('fetching with valid origin/destination returns a RoutingPlan with legs', async () => {
+    const result = await handleRouteRequest({
       origin: 'London',
       destination: 'Edinburgh',
       tripProfile: balanced,
@@ -18,8 +17,8 @@ describe('useRoutingPlan (via handleRouteRequest)', () => {
     }
   })
 
-  it('charging stops in the RoutingPlan have valid coordinates', () => {
-    const result = handleRouteRequest({
+  it('charging stops in the RoutingPlan have valid coordinates', async () => {
+    const result = await handleRouteRequest({
       origin: 'London',
       destination: 'Edinburgh',
       tripProfile: { reliability: 10, safety: 80, speed: 10 },

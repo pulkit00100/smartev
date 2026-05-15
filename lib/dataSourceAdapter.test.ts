@@ -1,18 +1,18 @@
-import { getRoute } from './dataSourceAdapter'
+import { mockDataSource } from './dataSourceAdapter'
 
-describe('getRoute', () => {
-  it('returns a RawRoute with at least 3 segments', () => {
-    const route = getRoute('London', 'Edinburgh')
+describe('mockDataSource.getRoute', () => {
+  it('returns a RawRoute with at least 3 segments', async () => {
+    const route = await mockDataSource.getRoute('London', 'Edinburgh')
     expect(route.segments.length).toBeGreaterThanOrEqual(3)
   })
 
-  it('returns at least 2 potential charging stops', () => {
-    const route = getRoute('London', 'Edinburgh')
+  it('returns at least 2 potential charging stops', async () => {
+    const route = await mockDataSource.getRoute('London', 'Edinburgh')
     expect(route.potentialChargingStops.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('each segment has a polyline and distanceKm', () => {
-    const route = getRoute('London', 'Edinburgh')
+  it('each segment has a polyline and distanceKm', async () => {
+    const route = await mockDataSource.getRoute('London', 'Edinburgh')
     for (const segment of route.segments) {
       expect(segment.polyline.type).toBe('LineString')
       expect(typeof segment.distanceKm).toBe('number')
@@ -20,7 +20,7 @@ describe('getRoute', () => {
     }
   })
 
-  it('throws when origin and destination are identical', () => {
-    expect(() => getRoute('London', 'London')).toThrow()
+  it('rejects when origin and destination are identical', async () => {
+    await expect(mockDataSource.getRoute('London', 'London')).rejects.toThrow()
   })
 })

@@ -28,6 +28,21 @@ export type RawRoute = {
   potentialChargingStops: Array<{ location: [number, number] }>
 }
 
+export type DataSource = {
+  getRoute(origin: string, destination: string): Promise<RawRoute>
+}
+
+export type EnrichmentConfig = {
+  maxRangeKm: number
+  minRangeKm: number
+  maxChargeMins: number
+  minChargeMins: number
+  stopThresholdPercent: {
+    conservative: number
+    aggressive: number
+  }
+}
+
 export type RoutingPlan = {
   legs: RoutingPlanLeg[]
   chargingStops: ChargingStop[]

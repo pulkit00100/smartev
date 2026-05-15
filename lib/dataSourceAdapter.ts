@@ -1,12 +1,12 @@
-import type { RawRoute } from '../types'
+import type { RawRoute, DataSource } from '../types'
 
-export function getRoute(origin: string, destination: string): RawRoute {
+function getRoute(origin: string, destination: string): Promise<RawRoute> {
   if (origin === destination) {
-    throw new Error('Origin and destination must be different')
+    return Promise.reject(new Error('Origin and destination must be different'))
   }
 
   // Mock: London → Edinburgh via real A1/M1 corridor
-  return {
+  return Promise.resolve({
     segments: [
       {
         polyline: {
@@ -43,5 +43,7 @@ export function getRoute(origin: string, destination: string): RawRoute {
       { location: [-0.4965, 53.2307] }, // Grantham services
       { location: [-1.5491, 53.8008] }, // Leeds services
     ],
-  }
+  } as RawRoute)
 }
+
+export const mockDataSource: DataSource = { getRoute }

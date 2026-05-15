@@ -1,26 +1,18 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { RoutingPlanMap } from '../components/RoutingPlanMap'
 import { ItineraryPanel } from '../components/ItineraryPanel'
 import { TripProfileEditor } from '../components/TripProfileEditor'
 import { useRoutingPlan } from '../lib/useRoutingPlan'
-import { createTripProfileStore } from '../lib/tripProfileStore'
-import type { TripProfile } from '../types'
-
-const store = createTripProfileStore()
+import { useTripProfile } from '../lib/TripProfileContext'
 
 export default function Home() {
-  const [activeProfile, setActiveProfile] = useState<TripProfile>(store.activeProfile)
+  const { activeProfile, setOverride, setDefault } = useTripProfile()
   const [panelOpen, setPanelOpen] = useState(false)
   const [showProfileEditor, setShowProfileEditor] = useState(false)
 
   const { routingPlan, loading } = useRoutingPlan('London', 'Edinburgh', activeProfile)
-
-  const handleProfileChange = useCallback((profile: TripProfile) => {
-    store.setOverride(profile)
-    setActiveProfile(profile)
-  }, [])
 
   return (
     <main style={{ position: 'relative', width: '100%', height: '100dvh', overflow: 'hidden' }}>
@@ -54,9 +46,9 @@ export default function Home() {
           background: '#fff', borderRadius: 16, padding: 16,
           boxShadow: '0 4px 24px rgba(0,0,0,0.15)', width: 300,
         }}>
-          <TripProfileEditor profile={activeProfile} onChange={handleProfileChange} />
+          <TripProfileEditor profile={activeProfile} onChange={setOverride} />
           <button
-            onClick={() => { store.setDefault(activeProfile); setShowProfileEditor(false) }}
+            onClick={() => { setDefault(activeProfile); setShowProfileEditor(false) }}
             style={{
               width: '100%', marginTop: 8, padding: '10px 0',
               background: '#3B82F6', color: '#fff', border: 'none',

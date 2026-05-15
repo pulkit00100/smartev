@@ -1,6 +1,6 @@
-import type { RoutingPlan, TripProfile } from '../types'
+import type { RoutingPlan, TripProfile, DataSource } from '../types'
 import { isValidTripProfile } from './tripProfile'
-import { getRoute } from './dataSourceAdapter'
+import { mockDataSource } from './dataSourceAdapter'
 import { enrichRoute } from './routeEnrichmentService'
 
 type RouteRequestBody = {
@@ -14,7 +14,10 @@ type RouteResponse =
   | { status: 400; data: { error: string } }
   | { status: 500; data: { error: string } }
 
-export function handleRouteRequest(body: unknown): RouteResponse {
+export async function handleRouteRequest(
+  body: unknown,
+  dataSource: DataSource = mockDataSource
+): Promise<RouteResponse> {
   const { origin, destination, tripProfile } = (body ?? {}) as RouteRequestBody
 
   if (!origin || !destination) {
@@ -26,7 +29,7 @@ export function handleRouteRequest(body: unknown): RouteResponse {
   }
 
   try {
-    const rawRoute = getRoute(origin, destination)
+    const rawRoute = await dataSource.getRoute(origin, destination)
     const routingPlan = enrichRoute(rawRoute, tripProfile)
     return { status: 200, data: routingPlan }
   } catch (err) {
